@@ -1,6 +1,7 @@
 {
   "name": "gatsby-remark-relative-images",
-  "description": "Convert image src(s) in markdown to be relative to their node's parent directory. This will help gatsby-remark-images match images outside the node folder. For example, use with NetlifyCMS.",
+  "description":
+    "Convert image src(s) in markdown to be relative to their node's parent directory. This will help gatsby-remark-images match images outside the node folder. For example, use with NetlifyCMS.",
   "version": "0.0.1",
   "author": "Daniel Mahon <daniel@mahonstudios.com>",
   "dependencies": {
@@ -35,10 +36,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/danielmahon/gatsby-remark-relative-images.git"
+    "url":
+      "git+https://github.com/danielmahon/gatsby-remark-relative-images.git"
   },
   "bugs": {
     "url": "https://github.com/danielmahon/gatsby-remark-relative-images/issues"
   },
-  "homepage": "https://github.com/danielmahon/gatsby-remark-relative-images#readme"
+  "homepage":
+    "https://github.com/danielmahon/gatsby-remark-relative-images#readme"
 }
