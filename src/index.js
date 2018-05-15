@@ -4,6 +4,7 @@ const isRelativeUrl = require(`is-relative-url`);
 const _ = require(`lodash`);
 const cheerio = require(`cheerio`);
 const slash = require(`slash`);
+const deepMap = require('deep-map');
 
 // If the image is relative (not hosted elsewhere)
 // 1. Find the image file
@@ -115,7 +116,9 @@ module.exports = (
 const fileNodes = [];
 
 module.exports.fmImagesToRelative = node => {
+  // Save file references
   fileNodes.push(node);
+  // Only process markdown files
   if (node.internal.type === `MarkdownRemark`) {
     // Convert paths in frontmatter to relative
     function makeRelative(value) {
@@ -135,18 +138,7 @@ module.exports.fmImagesToRelative = node => {
       }
       return value;
     }
-    _.each(node.frontmatter, (value, key) => {
-      if (_.isArray(value)) {
-        node.frontmatter[key] = _.map(value, val => {
-          if (_.isObject(val)) {
-            return _.mapValues(val, val2 => makeRelative(val2));
-          } else {
-            return makeRelative(val);
-          }
-        });
-      } else {
-        node.frontmatter[key] = makeRelative(value);
-      }
-    });
+    // Deeply iterate through frontmatter data for absolute paths
+    deepMap(node.frontmatter, makeRelative, { inPlace: true });
   }
 };
