@@ -37,8 +37,8 @@ module.exports = (
           let imagePath;
           // See if there is a matching file path from gatsby-source-filesystem
           const imageNode = _.find(files, file => {
-            imagePath = slash(path.join(file.dir, '..', node.url));
-            return file.absolutePath === imagePath;
+            imagePath = slash(path.join(file.dir, path.basename(node.url)));
+            return path.normalize(file.absolutePath) === imagePath;
           });
           // Return if we didn't find a match
           if (!imageNode) return resolve();
@@ -90,9 +90,9 @@ module.exports = (
               const imageNode = _.find(files, file => {
                 if (file.sourceInstanceName === options.name) {
                   imagePath = slash(
-                    path.join(file.dir, '..', formattedImgTag.url)
+                    path.join(file.dir, path.basename(formattedImgTag.url))
                   );
-                  return file.absolutePath === imagePath;
+                  return path.normalize(file.absolutePath) === imagePath;
                 }
               });
 
@@ -126,7 +126,7 @@ module.exports.fmImagesToRelative = node => {
         let imagePath;
         const foundImageNode = _.find(fileNodes, file => {
           if (!file.dir) return;
-          imagePath = path.join(file.dir, '..', value);
+          imagePath = slash(path.join(file.dir, path.basename(value)));
           return path.normalize(file.absolutePath) === imagePath;
         });
         if (foundImageNode) {
