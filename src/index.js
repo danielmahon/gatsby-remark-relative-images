@@ -127,7 +127,7 @@ module.exports.fmImagesToRelative = node => {
         const foundImageNode = _.find(fileNodes, file => {
           if (!file.dir) return;
           imagePath = path.join(file.dir, '..', value);
-          return file.absolutePath === imagePath;
+          return path.normalize(file.absolutePath) === imagePath;
         });
         if (foundImageNode) {
           return path.relative(
