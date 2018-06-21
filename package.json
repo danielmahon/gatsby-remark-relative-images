@@ -4,6 +4,7 @@
   "version": "0.1.2",
   "author": "Daniel Mahon <daniel@mahonstudios.com>",
   "dependencies": {
+    "babel-polyfill": "^6.26.0",
     "cheerio": "1.0.0-rc.2",
     "deep-map": "1.5.0",
     "is-relative-url": "2.0.0",
