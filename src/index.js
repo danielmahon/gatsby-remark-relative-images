@@ -3,7 +3,6 @@ const path = require(`path`);
 const isRelativeUrl = require(`is-relative-url`);
 const _ = require(`lodash`);
 const cheerio = require(`cheerio`);
-const slash = require(`slash`);
 const deepMap = require('deep-map');
 
 // If the image is relative (not hosted elsewhere)
@@ -37,7 +36,7 @@ module.exports = (
           let imagePath;
           // See if there is a matching file path from gatsby-source-filesystem
           const imageNode = _.find(files, file => {
-            imagePath = slash(path.join(file.dir, path.basename(node.url)));
+            imagePath = path.join(file.dir, path.basename(node.url));
             return path.normalize(file.absolutePath) === imagePath;
           });
           // Return if we didn't find a match
@@ -89,9 +88,7 @@ module.exports = (
               let imagePath;
               const imageNode = _.find(files, file => {
                 if (file.sourceInstanceName === options.name) {
-                  imagePath = slash(
-                    path.join(file.dir, path.basename(formattedImgTag.url))
-                  );
+                  imagePath = path.join(file.dir, path.basename(formattedImgTag.url));
                   return path.normalize(file.absolutePath) === imagePath;
                 }
               });
@@ -126,7 +123,7 @@ module.exports.fmImagesToRelative = node => {
         let imagePath;
         const foundImageNode = _.find(fileNodes, file => {
           if (!file.dir) return;
-          imagePath = slash(path.join(file.dir, path.basename(value)));
+          imagePath = path.join(file.dir, path.basename(value));
           return path.normalize(file.absolutePath) === imagePath;
         });
         if (foundImageNode) {
