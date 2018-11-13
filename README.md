@@ -64,3 +64,54 @@ exports.onCreateNode = ({ node }) => {
   fmImagesToRelative(node);
 };
 ```
+
+### FAQ
+
+### I'm getting the error: Field "image" must not have a selection since type "String" has no subfields
+This is a common error when working with Netlify CMS (see issue [gatsby/gatsby#5990](https://github.com/gatsbyjs/gatsby/issues/5990)).
+
+The application must include the `media` with `gatsby-source-filesystem` to include all the uploaded media and to make it available on build time. **Note:** The media folder must be included **before** the other content.
+
+For example, an application that is using NetlifyCMS and this plugin, and has a content folder with markdown that comes from Netlify. Here's how the `gatsby-config.js` should look like:
+
+```js
+module.exports = {
+  plugins: [
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        path: `${__dirname}/static/assets`,
+        name: 'assets',
+      },
+    },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        path: `${__dirname}/src/content`,
+        name: 'content',
+      },
+    },
+    `gatsby-transformer-sharp`,
+    `gatsby-plugin-sharp`,
+    {
+      resolve: `gatsby-transformer-remark`,
+      options: {
+        plugins: [
+          {
+            resolve: `gatsby-remark-relative-images`,
+            options: {
+              name: 'assets'
+            }
+          },
+          {
+            resolve: `gatsby-remark-images`,
+            options: {},
+          },
+        ],
+      },
+    },
+    `gatsby-plugin-netlify-cms`,
+  ],
+}
+```
+This should fix the error above. Please notice that part of the options of this plugin `gatsby-remark-relative-images` is the name option "`assets`", that is the same name declared by the `gatsby-source-filesystem` above.
