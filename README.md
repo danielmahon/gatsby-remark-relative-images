@@ -109,4 +109,4 @@ module.exports = {
   ],
 }
 ```
-seotice that part of the options of this plugin `gatsby-remark-rel ystem` above.
+
