@@ -109,4 +109,4 @@ module.exports = {
   ],
 }
 ```
-This should fix the error above. Please notice that part of the options of this plugin `gatsby-remark-relative-images` is the name option "`assets`", that is the same name declared by the `gatsby-source-filesystem` above.
+seotice that part of the options of this plugin `gatsby-remark-rel ystem` above.
