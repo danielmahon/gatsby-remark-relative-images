@@ -65,7 +65,7 @@ exports.onCreateNode = ({ node }) => {
 };
 ```
 
-## FAQ
+## FAQs
 
 ### I'm getting the error: Field "image" must not have a selection since type "String" has no subfields
 This is a common error when working with Netlify CMS (see issue [gatsby/gatsby#5990](https://github.com/gatsbyjs/gatsby/issues/5990)).
