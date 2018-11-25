@@ -63,8 +63,8 @@ module.exports = function (_ref, pluginOptions) {
               case 2:
                 // See if there is a matching file path from gatsby-source-filesystem
                 imageNode = _.find(files, function (file) {
-                  imagePath = slash(path.join(file.dir, path.basename(node.url)));
-                  return path.normalize(file.absolutePath) === imagePath;
+                  imagePath = path.join(file.dir, path.basename(node.url));
+                  return slash(path.normalize(file.absolutePath)) === slash(imagePath);
                 }); // Return if we didn't find a match
 
                 if (imageNode) {
@@ -78,7 +78,7 @@ module.exports = function (_ref, pluginOptions) {
                 // Get the markdown file's parent directory
                 parentDirectory = getNode(markdownNode.parent).dir; // Make the image src relative to the markdown file
 
-                node.url = path.relative(parentDirectory, imagePath); // Return modified node
+                node.url = slash(path.relative(parentDirectory, imagePath)); // Return modified node
 
                 return _context.abrupt("return", resolve(node));
 
@@ -156,8 +156,8 @@ module.exports = function (_ref, pluginOptions) {
 
                       var imageNode = _.find(files, function (file) {
                         if (file.sourceInstanceName === options.name) {
-                          imagePath = slash(path.join(file.dir, path.basename(formattedImgTag.url)));
-                          return path.normalize(file.absolutePath) === imagePath;
+                          imagePath = path.join(file.dir, path.basename(formattedImgTag.url));
+                          return slash(path.normalize(file.absolutePath)) === slash(imagePath);
                         }
                       });
 
@@ -166,7 +166,7 @@ module.exports = function (_ref, pluginOptions) {
                       };
                       var parentNode = getNode(markdownNode.parent); // Make the image src relative to its parent node
 
-                      thisImg.attr("src", path.relative(parentNode.dir, imagePath));
+                      thisImg.attr("src", slash(path.relative(parentNode.dir, imagePath)));
                       node.value = $("body").html(); // fix for cheerio v1
                     };
 
@@ -230,12 +230,12 @@ module.exports.fmImagesToRelative = function (node) {
 
         var foundImageNode = _.find(fileNodes, function (file) {
           if (!file.dir) return;
-          imagePath = slash(path.join(file.dir, path.basename(value)));
-          return path.normalize(file.absolutePath) === imagePath;
+          imagePath = path.join(file.dir, path.basename(value));
+          return slash(path.normalize(file.absolutePath)) === slash(imagePath);
         });
 
         if (foundImageNode) {
-          return path.relative(path.join(node.fileAbsolutePath, ".."), imagePath);
+          return slash(path.relative(path.join(node.fileAbsolutePath, ".."), imagePath));
         }
       }
 

@@ -35,15 +35,15 @@ module.exports = ({ files, markdownNode, markdownAST, pathPrefix, getNode, repor
 					let imagePath;
 					// See if there is a matching file path from gatsby-source-filesystem
 					const imageNode = _.find(files, file => {
-						imagePath = slash(path.join(file.dir, path.basename(node.url)));
-						return path.normalize(file.absolutePath) === imagePath;
+						imagePath = path.join(file.dir, path.basename(node.url));
+						return slash(path.normalize(file.absolutePath)) === slash(imagePath);
 					});
 					// Return if we didn't find a match
 					if (!imageNode) return resolve();
 					// Get the markdown file's parent directory
 					const parentDirectory = getNode(markdownNode.parent).dir;
 					// Make the image src relative to the markdown file
-					node.url = path.relative(parentDirectory, imagePath);
+					node.url = slash(path.relative(parentDirectory, imagePath));
 					// Return modified node
 					return resolve(node);
 				})
@@ -87,8 +87,8 @@ module.exports = ({ files, markdownNode, markdownAST, pathPrefix, getNode, repor
 							let imagePath;
 							const imageNode = _.find(files, file => {
 								if (file.sourceInstanceName === options.name) {
-									imagePath = slash(path.join(file.dir, path.basename(formattedImgTag.url)));
-									return path.normalize(file.absolutePath) === imagePath;
+									imagePath = path.join(file.dir, path.basename(formattedImgTag.url));
+									return slash(path.normalize(file.absolutePath)) === slash(imagePath);
 								}
 							});
 
@@ -96,7 +96,7 @@ module.exports = ({ files, markdownNode, markdownAST, pathPrefix, getNode, repor
 
 							const parentNode = getNode(markdownNode.parent);
 							// Make the image src relative to its parent node
-							thisImg.attr("src", path.relative(parentNode.dir, imagePath));
+							thisImg.attr("src", slash(path.relative(parentNode.dir, imagePath)));
 
 							node.value = $(`body`).html(); // fix for cheerio v1
 						}
@@ -120,11 +120,11 @@ module.exports.fmImagesToRelative = node => {
 				let imagePath;
 				const foundImageNode = _.find(fileNodes, file => {
 					if (!file.dir) return;
-					imagePath = slash(path.join(file.dir, path.basename(value)));
-					return path.normalize(file.absolutePath) === imagePath;
+					imagePath = path.join(file.dir, path.basename(value));
+					return slash(path.normalize(file.absolutePath)) === slash(imagePath);
 				});
 				if (foundImageNode) {
-					return path.relative(path.join(node.fileAbsolutePath, ".."), imagePath);
+					return slash(path.relative(path.join(node.fileAbsolutePath, ".."), imagePath));
 				}
 			}
 			return value;
