@@ -113,7 +113,7 @@ module.exports.fmImagesToRelative = node => {
 	// Save file references
 	fileNodes.push(node);
 	// Only process markdown files
-	if (node.internal.type === `MarkdownRemark`) {
+	if (node.internal.type === `MarkdownRemark` || node.internal.type === `Mdx`) {
 		// Convert paths in frontmatter to relative
 		function makeRelative(value) {
 			if (_.isString(value) && path.isAbsolute(value)) {
