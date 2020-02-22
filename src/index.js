@@ -32,16 +32,15 @@ module.exports = ({ files, markdownNode, markdownAST, pathPrefix, getNode, repor
 					if (!isRelativeUrl(node.url)) {
 						return resolve();
 					}
-					let imagePath;
+					// Get the markdown file's parent directory
+					const parentDirectory = getNode(markdownNode.parent).dir;
+					const imagePath = slash(path.join(parentDirectory, node.url))
 					// See if there is a matching file path from gatsby-source-filesystem
 					const imageNode = _.find(files, file => {
-						imagePath = path.join(file.dir, path.basename(node.url));
-						return slash(path.normalize(file.absolutePath)) === slash(imagePath);
+						return slash(path.normalize(file.absolutePath)) === imagePath;
 					});
 					// Return if we didn't find a match
 					if (!imageNode) return resolve();
-					// Get the markdown file's parent directory
-					const parentDirectory = getNode(markdownNode.parent).dir;
 					// Make the image src relative to the markdown file
 					node.url = slash(path.relative(parentDirectory, imagePath));
 					// Return modified node
