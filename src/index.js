@@ -108,13 +108,17 @@ module.exports = ({ files, markdownNode, markdownAST, pathPrefix, getNode, repor
 
 const fileNodes = [];
 
-module.exports.fmImagesToRelative = node => {
+module.exports.fmImagesToRelative = (node, fieldsToTransform) => {
+	const shouldSelectivelyTransform = Array.isArray(fieldsToTransform);
 	// Save file references
 	fileNodes.push(node);
 	// Only process markdown files
 	if (node.internal.type === `MarkdownRemark` || node.internal.type === `Mdx`) {
 		// Convert paths in frontmatter to relative
-		function makeRelative(value) {
+		function makeRelative(value, key) {
+			if (shouldSelectivelyTransform && fieldsToTransform.indexOf(key) === -1) {
+				return value
+			}
 			if (_.isString(value) && path.isAbsolute(value)) {
 				let imagePath;
 				const foundImageNode = _.find(fileNodes, file => {

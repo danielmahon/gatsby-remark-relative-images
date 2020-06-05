@@ -65,6 +65,19 @@ exports.onCreateNode = ({ node }) => {
 };
 ```
 
+This syntax will convert all of your frontmatter fields. If you want to only transform specific fields, the method accepts an explicit list of fields to transform:
+
+```js
+// gatsby-node.js
+const { fmImagesToRelative } = require('gatsby-remark-relative-images');
+
+exports.onCreateNode = ({ node }) => {
+  fmImagesToRelative(node, ['image']);
+};
+```
+
+Note that the field names in that list will apply to any nested fields. There is currently no way to differentiate between, for example, `image` and `details.image`, the transform list will allow both fields.
+
 ## FAQs
 
 ### I'm getting the error: Field "image" must not have a selection since type "String" has no subfields
