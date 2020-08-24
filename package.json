@@ -1,22 +1,14 @@
 {
   "name": "gatsby-remark-relative-images",
+  "version": "1.0.0-beta.1",
   "description": "Convert image src(s) in markdown to be relative to their node's parent directory. This will help gatsby-remark-images match images outside the node folder. For example, use with NetlifyCMS.",
-  "version": "0.3.0",
-  "author": "Daniel Mahon <daniel@mahonstudios.com>",
-  "dependencies": {
-    "babel-polyfill": "^6.26.0",
-    "cheerio": "^1.0.0-rc.3",
-    "deep-map": "^1.5.0",
-    "is-relative-url": "^2.0.0",
-    "lodash": "^4.17.15",
-    "slash": "^2.0.0",
-    "unist-util-select": "^1.5.0"
-  },
-  "devDependencies": {
-    "@babel/cli": "^7.5.5",
-    "@babel/core": "^7.5.5",
-    "@babel/preset-env": "^7.0.0-beta.44",
-    "cross-env": "^5.1.4"
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm run clean && tsc",
+    "watch": "npm run clean && tsc --watch",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "gatsby",
@@ -28,12 +20,24 @@
     "remark",
     "responsive images"
   ],
-  "license": "MIT",
-  "main": "index.js",
-  "scripts": {
-    "build": "babel src --out-dir .",
-    "prepack": "cross-env NODE_ENV=production npm run build",
-    "watch": "babel -w src --out-dir ."
+  "author": "Daniel Mahon <daniel@mahonstudios.com>",
+  "license": "0BSD",
+  "dependencies": {
+    "cheerio": "1.0.0-rc.3",
+    "is-relative-url": "3.0.0",
+    "lodash": "4.17.20",
+    "slash": "3.0.0",
+    "traverse": "0.6.6",
+    "unist-util-select": "3.0.1"
+  },
+  "devDependencies": {
+    "@types/cheerio": "0.22.21",
+    "@types/lodash": "4.14.160",
+    "@types/node": "14.6.0",
+    "@types/slash": "3.0.0",
+    "@types/traverse": "0.6.32",
+    "@types/unist": "2.0.3",
+    "typescript": "4.0.2"
   },
   "repository": {
     "type": "git",

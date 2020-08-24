@@ -6,7 +6,7 @@ NOTE: This was built for use with NetlifyCMS and should be considered a temporar
 
 ## Install
 
-`npm install --save gatsby-remark-relative-images`
+`npm i gatsby-remark-relative-images`
 
 ## How to use
 
@@ -36,6 +36,11 @@ plugins: [
         // go before gatsby-remark-images
         {
           resolve: `gatsby-remark-relative-images`,
+          options: {
+            // The root of "media_folder" in your config.yml
+            // Defaults to "static"
+            staticFolderName: 'static',
+          },
         },
         {
           resolve: `gatsby-remark-images`,
@@ -68,6 +73,7 @@ exports.onCreateNode = ({ node }) => {
 ## FAQs
 
 ### I'm getting the error: Field "image" must not have a selection since type "String" has no subfields
+
 This is a common error when working with Netlify CMS (see issue [gatsby/gatsby#5990](https://github.com/gatsbyjs/gatsby/issues/5990)).
 
 The application must include the `media` with `gatsby-source-filesystem` to include all the uploaded media and to make it available on build time. **Note:** The media folder must be included **before** the other content.
@@ -107,6 +113,5 @@ module.exports = {
     },
     `gatsby-plugin-netlify-cms`,
   ],
-}
+};
 ```
-
