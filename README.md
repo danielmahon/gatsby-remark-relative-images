@@ -1,6 +1,6 @@
 # gatsby-remark-relative-images
 
-Convert image src(s) in markdown to be relative to their node's parent directory. This will help [gatsby-remark-images](https://github.com/gatsbyjs/gatsby/tree/master/packages/gatsby-remark-images) match images outside the node folder. For example, use with NetlifyCMS.
+Convert image src(s) in markdown/html/frontmatter to be relative to their node's parent directory. This will help [gatsby-remark-images](https://github.com/gatsbyjs/gatsby/tree/master/packages/gatsby-remark-images) match images outside the node folder. For example, use with NetlifyCMS.
 
 NOTE: This was built for use with NetlifyCMS and should be considered a temporary solution until relative paths are supported. If it works for other use cases then great!
 
@@ -37,7 +37,7 @@ plugins: [
         {
           resolve: `gatsby-remark-relative-images`,
           options: {
-            // The root of "media_folder" in your config.yml
+            // [Optional] The root of "media_folder" in your config.yml
             // Defaults to "static"
             staticFolderName: 'static',
           },
@@ -67,12 +67,13 @@ const { fmImagesToRelative } = require('gatsby-remark-relative-images');
 
 exports.onCreateNode = ({ node }) => {
   fmImagesToRelative(node, {
-    // The root of "media_folder" in your config.yml
+    // [Optional] The root of "media_folder" in your config.yml
     // Defaults to "static"
     staticFolderName: 'static',
-    // Include the following fields, use dot notation for nested fields
+    // [Optional] Include the following fields, use dot notation for nested fields
+    // All fields are included by default
     include: ['featured'],
-    // Exclude the following fields, use dot notation for nested fields
+    // [Optional] Exclude the following fields, use dot notation for nested fields
     exclude: ['featured.hidden'],
   });
 };
