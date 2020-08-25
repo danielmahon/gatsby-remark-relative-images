@@ -8,7 +8,7 @@
     "build": "npm run clean && tsc",
     "watch": "npm run clean && tsc --watch",
     "clean": "rm -rf dist",
-    "prepublishOnly": "npm run build"
+    "prepare": "npm run build"
   },
   "keywords": [
     "gatsby",

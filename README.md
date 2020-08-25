@@ -66,7 +66,15 @@ Use the exported function `fmImagesToRelative` in your `gatsby-node.js`. This ta
 const { fmImagesToRelative } = require('gatsby-remark-relative-images');
 
 exports.onCreateNode = ({ node }) => {
-  fmImagesToRelative(node);
+  fmImagesToRelative(node, {
+    // The root of "media_folder" in your config.yml
+    // Defaults to "static"
+    staticFolderName: 'static',
+    // Include the following fields, use dot notation for nested fields
+    include: ['featured'],
+    // Exclude the following fields, use dot notation for nested fields
+    exclude: ['featured.hidden'],
+  });
 };
 ```
 

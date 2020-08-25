@@ -1,7 +1,7 @@
 import path from 'path';
 import { selectAll } from 'unist-util-select';
 import isRelativeUrl from 'is-relative-url';
-import { defaults, isString, find } from 'lodash';
+import { defaults, isString, find, some } from 'lodash';
 import cheerio from 'cheerio';
 import slash from 'slash';
 import traverse from 'traverse';
@@ -14,7 +14,13 @@ export type GatsbyNodePluginArgs = {
 };
 
 export type PluginOptions = {
-  staticFolderName?: string;
+  staticFolderName: string;
+};
+
+export type FrontMatterOptions = {
+  staticFolderName: string;
+  include: string[];
+  exclude: string[];
 };
 
 export type GatsbyNode = {
@@ -40,8 +46,14 @@ export type HtmlNode = {
 // 2. Convert the image src to be relative to its parent node
 // This will allow gatsby-remark-images to resolve the image correctly
 
-const defaultOptions = {
+const defaultPluginOptions = {
   staticFolderName: 'static',
+};
+
+const defaultFrontmatterOptions = {
+  staticFolderName: 'static',
+  include: [],
+  exclude: [],
 };
 
 const plugin = async (
@@ -49,7 +61,7 @@ const plugin = async (
   pluginOptions: PluginOptions
 ) => {
   // Default options
-  const options = defaults(pluginOptions, defaultOptions);
+  const options = defaults(pluginOptions, defaultPluginOptions);
 
   const findMatchingNode = (url: string) =>
     find(files, (file) => {
@@ -107,8 +119,9 @@ const plugin = async (
 
 const fileNodes: GatsbyNode[] = [];
 
-const fmImagesToRelative = (node: GatsbyNode, pluginOptions: PluginOptions) => {
-  const options = defaults(pluginOptions, defaultOptions);
+const fmImagesToRelative = (node: GatsbyNode, _options: FrontMatterOptions) => {
+  const options = defaults(_options, defaultFrontmatterOptions);
+
   // Save file references
   if (node.absolutePath) {
     fileNodes.push(node);
@@ -127,6 +140,23 @@ const fmImagesToRelative = (node: GatsbyNode, pluginOptions: PluginOptions) => {
     traverse(node.frontmatter).forEach(function (value) {
       if (!isString(value)) return;
       if (!path.isAbsolute(value)) return;
+
+      const paths = this.path.reduce<string[]>((acc, current) => {
+        acc.push(acc.length > 0 ? [acc, current].join('.') : current);
+        return acc;
+      }, []);
+
+      let shouldTransform = options.include.length < 1;
+
+      if (options.include.some((a) => paths.includes(a))) {
+        shouldTransform = true;
+      }
+
+      if (options.exclude.some((a) => paths.includes(a))) {
+        shouldTransform = false;
+      }
+
+      if (!shouldTransform) return;
 
       const imageNode = findMatchingNode(value);
 
