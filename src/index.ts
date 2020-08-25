@@ -3,8 +3,8 @@ import { selectAll } from 'unist-util-select';
 import isRelativeUrl from 'is-relative-url';
 import { defaults, isString, find, some } from 'lodash';
 import cheerio from 'cheerio';
-import slash from 'slash';
 import traverse from 'traverse';
+import { slash } from './utils';
 
 export type GatsbyNodePluginArgs = {
   files: GatsbyNode[];
