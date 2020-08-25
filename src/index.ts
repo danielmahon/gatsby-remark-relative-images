@@ -10,7 +10,7 @@ export type GatsbyNodePluginArgs = {
   files: GatsbyNode[];
   markdownNode: GatsbyNode;
   markdownAST: any;
-  getNode: (id: string) => GatsbyNode;
+  getNode: (id: string) => GatsbyNode | undefined;
 };
 
 export type PluginOptions = {
@@ -31,7 +31,7 @@ export type GatsbyNode = {
     type: string;
   };
   parent: string;
-  dir: string;
+  dir?: string;
   absolutePath: string;
   fileAbsolutePath: string;
   frontmatter?: object;
@@ -70,7 +70,7 @@ const plugin = async (
     });
 
   // Get the markdown file's parent directory
-  const parentDirectory = getNode(markdownNode.parent).dir;
+  const parentDirectory = getNode(markdownNode.parent)?.dir ?? '';
 
   // Process all markdown image nodes
   selectAll('image', markdownAST).forEach((_node: any) => {
