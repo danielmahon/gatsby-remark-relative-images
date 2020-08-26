@@ -1,6 +1,5 @@
 import path from 'path';
 import { selectAll } from 'unist-util-select';
-import isRelativeUrl from 'is-relative-url';
 import { defaults, isString, find } from 'lodash';
 import cheerio from 'cheerio';
 import traverse from 'traverse';
@@ -82,7 +81,7 @@ const plugin = async (
   selectAll('image', markdownAST).forEach((_node: any) => {
     const node = _node as GatsbyNode;
     if (!node.url) return;
-    if (!isRelativeUrl(node.url)) return;
+    if (!path.isAbsolute(node.url)) return;
 
     const imageNode = findMatchingNode(
       node.url,
@@ -106,8 +105,8 @@ const plugin = async (
       // Get the details we need.
       const url = $(element).attr(`src`);
 
-      // Only handle relative (local) urls
-      if (!url || !isRelativeUrl(url)) return;
+      // Only handle absolute (local) urls
+      if (!url || !path.isAbsolute(url)) return;
 
       const imageNode = findMatchingNode(url, files, options.staticFolderName);
 
@@ -120,15 +119,14 @@ const plugin = async (
   });
 };
 
-const fileNodes: GatsbyNode[] = [];
-
-const fmImagesToRelative = (node: GatsbyNode, _options: FrontMatterOptions) => {
+const fmImagesToRelative = (
+  node: GatsbyNode,
+  getNodes: () => GatsbyNode[],
+  _options: FrontMatterOptions
+) => {
   const options = defaults(_options, defaultFrontmatterOptions);
 
-  // Save file references
-  if (node.absolutePath) {
-    fileNodes.push(node);
-  }
+  const files = getNodes().filter((n) => n.absolutePath);
 
   // Only process markdown files
   if (node.internal.type === `MarkdownRemark` || node.internal.type === `Mdx`) {
@@ -156,7 +154,7 @@ const fmImagesToRelative = (node: GatsbyNode, _options: FrontMatterOptions) => {
 
       const imageNode = findMatchingNode(
         value,
-        fileNodes,
+        files,
         options.staticFolderName
       );
 
