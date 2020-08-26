@@ -57,16 +57,20 @@ plugins: [
 ];
 ```
 
-### To convert frontmatter images
+## To convert frontmatter images
 
 Use the exported function `fmImagesToRelative` in your `gatsby-node.js`. This takes every node returned by your gatsby-source plugins and converts any absolute paths in markdown frontmatter data into relative paths if a matching file is found.
+
+### Breaking change in v1.1.0
+
+You MUST pass `node` and `getNodes` to `fmImagesToRelative`.
 
 ```js
 // gatsby-node.js
 const { fmImagesToRelative } = require('gatsby-remark-relative-images');
 
-exports.onCreateNode = ({ node }) => {
-  fmImagesToRelative(node, {
+exports.onCreateNode = ({ node, getNodes }) => {
+  fmImagesToRelative(node, getNodes, {
     // [Optional] The root of "media_folder" in your config.yml
     // Defaults to "static"
     staticFolderName: 'static',
