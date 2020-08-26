@@ -1,7 +1,7 @@
 import path from 'path';
 import { selectAll } from 'unist-util-select';
 import isRelativeUrl from 'is-relative-url';
-import { defaults, isString, find, some } from 'lodash';
+import { defaults, isString, find } from 'lodash';
 import cheerio from 'cheerio';
 import traverse from 'traverse';
 import { slash } from './utils';
@@ -40,11 +40,6 @@ export type GatsbyNode = {
 export type HtmlNode = {
   value: string;
 } & GatsbyNode;
-
-// If the image is relative (not hosted elsewhere)
-// 1. Find the image file
-// 2. Convert the image src to be relative to its parent node
-// This will allow gatsby-remark-images to resolve the image correctly
 
 const defaultPluginOptions = {
   staticFolderName: 'static',
@@ -126,6 +121,7 @@ const fmImagesToRelative = (node: GatsbyNode, _options: FrontMatterOptions) => {
   if (node.absolutePath) {
     fileNodes.push(node);
   }
+
   // Only process markdown files
   if (node.internal.type === `MarkdownRemark` || node.internal.type === `Mdx`) {
     const findMatchingNode = (url: string) =>
