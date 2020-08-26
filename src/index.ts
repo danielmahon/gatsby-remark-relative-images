@@ -51,18 +51,29 @@ const defaultFrontmatterOptions = {
   exclude: [],
 };
 
+const findMatchingNode = (
+  url: string,
+  files: GatsbyNode[],
+  staticFolderName: string
+) => {
+  const result = find(files, (file) => {
+    const staticPath = slash(path.join(staticFolderName, url));
+    return slash(path.normalize(file.absolutePath)).endsWith(staticPath);
+  });
+  if (!result) {
+    throw new Error(
+      `No matching file found for src "${url}" in static folder "${staticFolderName}". Please check static folder name and that file exists at "${staticFolderName}${url}". This error will probably cause a "GraphQLDocumentError" later in build. All converted field paths MUST resolve to a matching file in the "static" folder.`
+    );
+  }
+  return result;
+};
+
 const plugin = async (
   { files, markdownNode, markdownAST, getNode }: GatsbyNodePluginArgs,
   pluginOptions: PluginOptions
 ) => {
   // Default options
   const options = defaults(pluginOptions, defaultPluginOptions);
-
-  const findMatchingNode = (url: string) =>
-    find(files, (file) => {
-      const staticPath = slash(path.join(options.staticFolderName, url));
-      return slash(path.normalize(file.absolutePath)).endsWith(staticPath);
-    });
 
   // Get the markdown file's parent directory
   const parentDirectory = getNode(markdownNode.parent)?.dir ?? '';
@@ -73,10 +84,11 @@ const plugin = async (
     if (!node.url) return;
     if (!isRelativeUrl(node.url)) return;
 
-    const imageNode = findMatchingNode(node.url);
-
-    // Return if we didn't find a match
-    if (!imageNode) return;
+    const imageNode = findMatchingNode(
+      node.url,
+      files,
+      options.staticFolderName
+    );
 
     // Update node.url to be relative to its parent file
     node.url = path.relative(parentDirectory, imageNode.absolutePath);
@@ -94,14 +106,10 @@ const plugin = async (
       // Get the details we need.
       const url = $(element).attr(`src`);
 
-      if (!url) return;
-
       // Only handle relative (local) urls
-      if (!isRelativeUrl(url)) return;
+      if (!url || !isRelativeUrl(url)) return;
 
-      const imageNode = findMatchingNode(url);
-
-      if (!imageNode) return;
+      const imageNode = findMatchingNode(url, files, options.staticFolderName);
 
       // Make the image src relative to its parent node
       const src = path.relative(parentDirectory, imageNode.absolutePath);
@@ -124,14 +132,6 @@ const fmImagesToRelative = (node: GatsbyNode, _options: FrontMatterOptions) => {
 
   // Only process markdown files
   if (node.internal.type === `MarkdownRemark` || node.internal.type === `Mdx`) {
-    const findMatchingNode = (url: string) =>
-      find(fileNodes, (file) => {
-        const staticPath = slash(path.join(options.staticFolderName, url));
-        return slash(path.normalize(file.absolutePath ?? '')).endsWith(
-          staticPath
-        );
-      });
-
     // Deeply iterate through frontmatter data for absolute paths
     traverse(node.frontmatter).forEach(function (value) {
       if (!isString(value)) return;
@@ -154,9 +154,11 @@ const fmImagesToRelative = (node: GatsbyNode, _options: FrontMatterOptions) => {
 
       if (!shouldTransform) return;
 
-      const imageNode = findMatchingNode(value);
-
-      if (!imageNode) return;
+      const imageNode = findMatchingNode(
+        value,
+        fileNodes,
+        options.staticFolderName
+      );
 
       const newValue = path.relative(
         path.join(node.fileAbsolutePath, '..'),
