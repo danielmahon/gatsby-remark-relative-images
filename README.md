@@ -12,19 +12,27 @@ Convert image src(s) in markdown/html/frontmatter to be relative to their node's
 
 ## v2 Breaking Changes:
 
-`fmImagesToRelative` has been removed, it is no longer needed
+The `fmImagesToRelative()` function has been removed, it is no longer needed.
 
 NOTE: v2 greatly simplifies things and seems to work well for my use-case (NetlifyCMS), if you were previously using this plugin for something else that no longer works with v2, please open an issue and let me know and I will try to accomodate your use-case. Thanks.
 
 ## Install
 
 ```bash
-yarn add gatsby-remark-relative-images
+# Install v2 beta (Recommended, will soon be default)
+yarn add gatsby-remark-relative-images@next
 
+# Install v1 (TS refactor, but quickly found more things to simplfy)
 npm i gatsby-remark-relative-images
+
+# Install original (a bit hacky but have been working for most)
+npm i gatsby-remark-relative-images@0.3.0
+npm i gatsby-remark-relative-images@0.2.0
 ```
 
 ## Usage Example
+
+This usage example is for v2 of this plugin.
 
 /gatsby-config.js
 
