@@ -2,13 +2,15 @@ import path from 'path';
 import { selectAll } from 'unist-util-select';
 import { defaults, isString, find } from 'lodash';
 import cheerio from 'cheerio';
-import traverse from 'traverse';
 import { slash } from './utils';
 
 export type GatsbyNodePluginArgs = {
   files: GatsbyFile[];
   markdownNode: MarkdownNode;
   markdownAST: any;
+  reporter: {
+    info: (msg: string, error?: Error) => void;
+  };
 };
 
 export type GatsbyFile = {
@@ -46,29 +48,33 @@ export type HtmlNode = {
   value: string;
 } & MarkdownNode;
 
-const defaultPluginOptions = {
+export const defaultPluginOptions = {
   staticFolderName: 'static',
   include: [],
   exclude: [],
 };
 
-const plugin = async (
+export const findMatchingFile = (
+  src: string,
+  files: GatsbyFile[],
+  options: PluginOptions
+) => {
+  const result = find(files, (file) => {
+    const staticPath = slash(path.join(options.staticFolderName, src));
+    return slash(path.normalize(file.absolutePath)).endsWith(staticPath);
+  });
+  if (!result) {
+    throw new Error(
+      `No matching file found for src "${src}" in static folder "${options.staticFolderName}". Please check static folder name and that file exists at "${options.staticFolderName}${src}". This error will probably cause a "GraphQLDocumentError" later in build. All converted field paths MUST resolve to a matching file in the "static" folder.`
+    );
+  }
+  return result;
+};
+
+export default async (
   { files, markdownNode, markdownAST }: GatsbyNodePluginArgs,
   pluginOptions: PluginOptions
 ) => {
-  const findMatchingFile = (src: string) => {
-    const result = find(files, (file) => {
-      const staticPath = slash(path.join(options.staticFolderName, src));
-      return slash(path.normalize(file.absolutePath)).endsWith(staticPath);
-    });
-    if (!result) {
-      throw new Error(
-        `No matching file found for src "${src}" in static folder "${options.staticFolderName}". Please check static folder name and that file exists at "${options.staticFolderName}${src}". This error will probably cause a "GraphQLDocumentError" later in build. All converted field paths MUST resolve to a matching file in the "static" folder.`
-      );
-    }
-    return result;
-  };
-
   // Default options
   const options = defaults(pluginOptions, defaultPluginOptions);
 
@@ -82,7 +88,7 @@ const plugin = async (
     if (!isString(node.url)) return;
     if (!path.isAbsolute(node.url) || !path.extname(node.url)) return;
 
-    const file = findMatchingFile(node.url);
+    const file = findMatchingFile(node.url, files, options);
 
     // Update node.url to be relative to its parent file
     node.url = path.relative(directory, file.absolutePath);
@@ -104,7 +110,7 @@ const plugin = async (
       if (!isString(url)) return;
       if (!path.isAbsolute(url) || !path.extname(url)) return;
 
-      const file = findMatchingFile(url);
+      const file = findMatchingFile(url, files, options);
 
       // Make the image src relative to its parent node
       const src = path.relative(directory, file.absolutePath);
@@ -113,35 +119,4 @@ const plugin = async (
       node.value = $(`body`).html() ?? ''; // fix for cheerio v1
     });
   });
-
-  // Deeply iterate through frontmatter data for absolute paths
-  traverse(markdownNode.frontmatter).forEach(function (value) {
-    if (!isString(value)) return;
-    if (!path.isAbsolute(value) || !path.extname(value)) return;
-
-    const paths = this.path.reduce<string[]>((acc, current) => {
-      acc.push(acc.length > 0 ? [acc, current].join('.') : current);
-      return acc;
-    }, []);
-
-    let shouldTransform = options.include.length < 1;
-
-    if (options.include.some((a) => paths.includes(a))) {
-      shouldTransform = true;
-    }
-
-    if (options.exclude.some((a) => paths.includes(a))) {
-      shouldTransform = false;
-    }
-
-    if (!shouldTransform) return;
-
-    const file = findMatchingFile(value);
-
-    const newValue = path.relative(directory, file.absolutePath);
-
-    this.update(newValue);
-  });
 };
-
-export default plugin;
