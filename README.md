@@ -1,8 +1,6 @@
 # gatsby-remark-relative-images
 
-Convert image src(s) in markdown/html/frontmatter to be relative to their node's parent directory. This will help [gatsby-remark-images](https://github.com/gatsbyjs/gatsby/tree/master/packages/gatsby-remark-images) match images outside the node folder. For example, use with NetlifyCMS.
-
-NOTE: This was built for use with NetlifyCMS and should be considered a temporary solution until relative paths are supported. If it works for other use cases then great!
+Convert image src(s) in markdown/html/frontmatter to be relative to their node's parent directory. This will help [gatsby-remark-images](https://github.com/gatsbyjs/gatsby/tree/master/packages/gatsby-remark-images) match images outside the node folder. This was built for use with NetlifyCMS and should be considered a temporary solution until relative paths are supported. If it works for other use cases then great!
 
 ### Features
 
@@ -12,9 +10,11 @@ NOTE: This was built for use with NetlifyCMS and should be considered a temporar
 - [x] Suports Unicode characters
 - [x] Frontmatter field filters (include/exclude)
 
-### v2 Breaking Changes:
+## v2 Breaking Changes:
 
 `fmImagesToRelative` has been removed, it is no longer needed
+
+NOTE: v2 greatly simplifies things and seems to work well for my use-case (NetlifyCMS), if you were previously using this plugin for something else that no longer works with v2, please open an issue and let me know and I will try to accomodate your use-case. Thanks.
 
 ## Install
 
@@ -29,55 +29,51 @@ npm i gatsby-remark-relative-images
 /gatsby-config.js
 
 ```javascript
-plugins: [
-  // Add static assets before markdown files
-  {
-    resolve: 'gatsby-source-filesystem',
-    options: {
-      path: `${__dirname}/static/uploads`,
-      name: 'uploads',
+module.exports = {
+  plugins: [
+    // Add static assets before markdown files
+    {
+      resolve: 'gatsby-source-filesystem',
+      options: {
+        path: `${__dirname}/static/uploads`,
+        name: 'uploads',
+      },
     },
-  },
-  {
-    resolve: 'gatsby-source-filesystem',
-    options: {
-      path: `${__dirname}/src/pages`,
-      name: 'pages',
+    {
+      resolve: 'gatsby-source-filesystem',
+      options: {
+        path: `${__dirname}/src/pages`,
+        name: 'pages',
+      },
     },
-  },
-  {
-    resolve: `gatsby-transformer-remark`,
-    options: {
-      plugins: [
-        // gatsby-remark-relative-images must
-        // go before gatsby-remark-images
-        {
-          resolve: `gatsby-remark-relative-images`,
-          options: {
-            // [Optional] The root of "media_folder" in your config.yml
-            // Defaults to "static"
-            staticFolderName: 'static',
-            // [Optional] Include the following fields, use dot notation for nested fields
-            // All fields are included by default
-            include: ['featured'],
-            // [Optional] Exclude the following fields, use dot notation for nested fields
-            // No fields are excluded by default
-            exclude: ['featured.skip'],
+    {
+      resolve: `gatsby-transformer-remark`,
+      options: {
+        plugins: [
+          // gatsby-remark-relative-images must go before gatsby-remark-images
+          {
+            resolve: `gatsby-remark-relative-images`,
+            options: {
+              // [Optional] The root of "media_folder" in your config.yml
+              // Defaults to "static"
+              staticFolderName: 'static',
+              // [Optional] Include the following fields, use dot notation for nested fields
+              // All fields are included by default
+              include: ['featured'],
+              // [Optional] Exclude the following fields, use dot notation for nested fields
+              // No fields are excluded by default
+              exclude: ['featured.skip'],
+            },
           },
-        },
-        {
-          resolve: `gatsby-remark-images`,
-          options: {
-            // It's important to specify the maxWidth (in pixels) of
-            // the content container as this plugin uses this as the
-            // base for generating different widths of each image.
-            maxWidth: 590,
+          {
+            resolve: `gatsby-remark-images`,
+            options: { maxWidth: 1024 },
           },
-        },
-      ],
+        ],
+      },
     },
-  },
-];
+  ],
+};
 ```
 
 /static/admin/config.yml
