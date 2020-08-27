@@ -4,14 +4,31 @@ Convert image src(s) in markdown/html/frontmatter to be relative to their node's
 
 NOTE: This was built for use with NetlifyCMS and should be considered a temporary solution until relative paths are supported. If it works for other use cases then great!
 
+### Features
+
+- [x] Converts markdown/mdx images
+- [x] Converts `src` in markdown/mdx html `<img />` tags
+- [x] Converts frontmatter fields, supports nested fields
+- [x] Suports Unicode characters
+- [x] Frontmatter field filters (include/exclude)
+
+### v2 Breaking Changes:
+
+`fmImagesToRelative` has been removed, it is no longer needed
+
 ## Install
 
-`npm i gatsby-remark-relative-images`
+```bash
+yarn add gatsby-remark-relative-images
 
-## How to use
+npm i gatsby-remark-relative-images
+```
+
+## Usage Example
+
+/gatsby-config.js
 
 ```javascript
-// gatsby-config.js
 plugins: [
   // Add static assets before markdown files
   {
@@ -40,6 +57,12 @@ plugins: [
             // [Optional] The root of "media_folder" in your config.yml
             // Defaults to "static"
             staticFolderName: 'static',
+            // [Optional] Include the following fields, use dot notation for nested fields
+            // All fields are included by default
+            include: ['featured'],
+            // [Optional] Exclude the following fields, use dot notation for nested fields
+            // No fields are excluded by default
+            exclude: ['featured.skip'],
           },
         },
         {
@@ -57,30 +80,41 @@ plugins: [
 ];
 ```
 
-## To convert frontmatter images
+/static/admin/config.yml
 
-Use the exported function `fmImagesToRelative` in your `gatsby-node.js`. This takes every node returned by your gatsby-source plugins and converts any absolute paths in markdown frontmatter data into relative paths if a matching file is found.
+```yml
+# ...
+media_folder: static/img
+public_folder: /img
+# ...
+```
 
-### Breaking change in v1.1.0
+/src/pages/blog-post.md
 
-You MUST pass `node` and `getNodes` to `fmImagesToRelative`.
+```md
+---
+templateKey: blog-post
+title: A beginners’ guide to brewing with Chemex
+date: 2017-01-04T15:04:10.000Z
+featured: { image: /img/chémex.jpg, skip: /img/chémex.jpg }
+<!-- featured: { image: ../../static/img/chémex.jpg, skip: /img/chémex.jpg } -->
+description: Brewing with a Chemex probably seems like a complicated, time-consuming ordeal, but once you get used to the process, it becomes a soothing ritual that's worth the effort every time.
+---
 
-```js
-// gatsby-node.js
-const { fmImagesToRelative } = require('gatsby-remark-relative-images');
+![chemex](/img/chémex.jpg)
 
-exports.onCreateNode = ({ node, getNodes }) => {
-  fmImagesToRelative(node, getNodes, {
-    // [Optional] The root of "media_folder" in your config.yml
-    // Defaults to "static"
-    staticFolderName: 'static',
-    // [Optional] Include the following fields, use dot notation for nested fields
-    // All fields are included by default
-    include: ['featured'],
-    // [Optional] Exclude the following fields, use dot notation for nested fields
-    exclude: ['featured.hidden'],
-  });
-};
+<!-- ![chemex](../../static/img/chémex.jpg) -->
+
+This week we’ll **take** a look at all the steps required to make astonishing coffee with a Chemex at home. The Chemex Coffeemaker is a manual, pour-over style glass-container coffeemaker that Peter Schlumbohm invented in 1941, and which continues to be manufactured by the Chemex Corporation in Chicopee, Massachusetts.
+
+In 1958, designers at the [Illinois Institute of Technology](https://www.spacefarm.digital) said that the Chemex Coffeemaker is _"one of the best-designed products of modern times"_, and so is included in the collection of the Museum of Modern Art in New York City.
+
+## The little secrets of Chemex brewing
+
+<img src="/img/chémex.jpg" alt="" style="width: 250px" />
+<!-- <img src="../../static/img/chémex.jpg" alt="" style="width: 250px" /> -->
+
+The Chemex Coffeemaker consists of an hourglass-shaped glass flask with a conical funnel-like neck (rather than the cylindrical neck of an Erlenmeyer flask) and uses proprietary filters, made of bonded paper (thicker-gauge paper than the standard paper filters for a drip-method coffeemaker) that removes most of the coffee oils, brewing coffee with a taste that is different than coffee brewed in other coffee-making systems; also, the thicker paper of the Chemex coffee filters may assist in removing cafestol, a cholesterol-containing compound found in coffee oils.
 ```
 
 ## FAQs

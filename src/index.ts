@@ -86,7 +86,6 @@ const plugin = async (
 
     // Update node.url to be relative to its parent file
     node.url = path.relative(directory, file.absolutePath);
-    console.log('image', node.url);
   });
 
   // Process all HTML images in markdown body
@@ -112,7 +111,6 @@ const plugin = async (
       $(element).attr('src', src);
 
       node.value = $(`body`).html() ?? ''; // fix for cheerio v1
-      console.log('html', node.value);
     });
   });
 
@@ -143,7 +141,6 @@ const plugin = async (
     const newValue = path.relative(directory, file.absolutePath);
 
     this.update(newValue);
-    console.log('frontmatter', newValue);
   });
 };
 
