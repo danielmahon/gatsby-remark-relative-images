@@ -19,13 +19,13 @@ NOTE: v2 greatly simplifies things and seems to work well for my use-case (Netli
 ## Install
 
 ```bash
-# Install v2 beta (Recommended, will soon be default)
-yarn add gatsby-remark-relative-images@next
+# Install v2 (Recommended)
+yarn add gatsby-remark-relative-images
 
-# Install v1 (TS refactor, but quickly found more things to simplfy)
-npm i gatsby-remark-relative-images
+# Install v1 (TS refactor, but quickly found more things to simplfy, skip)
+npm i gatsby-remark-relative-images@1.1.1
 
-# Install original (a bit hacky but have been working for most)
+# Install original (a bit hacky but have previously worked for most)
 npm i gatsby-remark-relative-images@0.3.0
 npm i gatsby-remark-relative-images@0.2.0
 ```
