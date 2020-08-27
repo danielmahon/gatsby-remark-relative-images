@@ -27,6 +27,7 @@
   "license": "0BSD",
   "dependencies": {
     "cheerio": "1.0.0-rc.3",
+    "is-invalid-path": "1.0.2",
     "lodash": "4.17.20",
     "traverse": "0.6.6",
     "unist-util-select": "3.0.1"
