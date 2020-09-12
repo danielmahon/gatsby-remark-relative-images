@@ -3,6 +3,7 @@ import { selectAll } from 'unist-util-select';
 import { defaults, isString, find } from 'lodash';
 import cheerio from 'cheerio';
 import { slash } from './utils';
+import { GatsbyNode } from 'gatsby';
 
 export type GatsbyNodePluginArgs = {
   files: GatsbyFile[];
@@ -11,16 +12,24 @@ export type GatsbyNodePluginArgs = {
   reporter: {
     info: (msg: string, error?: Error) => void;
   };
+  getNode: (id: string) => GatsbyNode;
 };
 
 export type GatsbyFile = {
   absolutePath: string;
 };
 
+export interface ResolveNodeArgs {
+  node: GatsbyNode;
+  getNode: (id: string) => GatsbyNode;
+}
+export type ResolveNodeFunc = (args: ResolveNodeArgs) => string;
+
 export type PluginOptions = {
   staticFolderName: string;
   include: string[];
   exclude: string[];
+  resolveNodePath?: ResolveNodeFunc;
 };
 
 export type FrontMatterOptions = {
@@ -72,15 +81,23 @@ export const findMatchingFile = (
 };
 
 export default async (
-  { files, markdownNode, markdownAST }: GatsbyNodePluginArgs,
+  { files, markdownNode, markdownAST, getNode }: GatsbyNodePluginArgs,
   pluginOptions: PluginOptions
 ) => {
   // Default options
   const options = defaults(pluginOptions, defaultPluginOptions);
 
-  if (!markdownNode.fileAbsolutePath) return;
+  let fileAbsolutePath = markdownNode.fileAbsolutePath;
 
-  const directory = path.dirname(markdownNode.fileAbsolutePath);
+  if (!fileAbsolutePath && pluginOptions.resolveNodePath) {
+    fileAbsolutePath = pluginOptions.resolveNodePath({
+      node: markdownNode,
+      getNode,
+    });
+  }
+  if (!fileAbsolutePath) return;
+
+  const directory = path.dirname(fileAbsolutePath);
 
   // Process all markdown image nodes
   selectAll('image', markdownAST).forEach((_node: any) => {
