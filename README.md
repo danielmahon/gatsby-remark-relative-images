@@ -71,6 +71,23 @@ module.exports = {
               // [Optional] Exclude the following fields, use dot notation for nested fields
               // No fields are excluded by default
               exclude: ['featured.skip'],
+              // [Optional] in case you want to process markdown nodes that were not created from a file
+              // you can provide a resolver function which produces the absolute path for a given node.
+              // In the example below the remarkNode was a child node of a fileNode. E.g. if you have
+              // markdown content in your frontmatter fields.
+              resolveNodePath: ({ node, getNode }) => {
+                let fileAbsolutePath = undefined;
+                let curNode = node;
+                while (curNode.parent && !fileAbsolutePath) {
+                  curNode = getNode(curNode.parent);
+                  fileAbsolutePath =
+                    curNode.fileAbsolutePath || curNode.absolutePath;
+                  if (fileAbsolutePath) {
+                    return fileAbsolutePath;
+                  }
+                }
+                return undefined;
+              },
             },
           },
           {
