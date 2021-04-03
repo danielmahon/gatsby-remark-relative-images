@@ -11,7 +11,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npm run clean && tsc -d",
     "watch": "npm run clean && tsc --watch",
-    "clean": "rm -rf dist",
+    "clean": "rm dist",
     "prepare": "npm run build"
   },
   "keywords": [
