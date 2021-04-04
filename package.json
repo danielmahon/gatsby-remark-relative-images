@@ -11,7 +11,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npm run clean && tsc -d",
     "watch": "npm run clean && tsc --watch",
-    "clean": "rm dist",
+    "clean": "rimraf ./dist",
     "prepare": "npm run build"
   },
   "keywords": [
@@ -40,7 +40,8 @@
     "@types/slash": "3.0.0",
     "@types/traverse": "0.6.32",
     "@types/unist": "2.0.3",
-    "typescript": "4.0.2"
+    "typescript": "4.0.2",
+    "rimraf": "^3.0.2"
   },
   "repository": {
     "type": "git",
