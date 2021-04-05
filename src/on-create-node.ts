@@ -8,6 +8,7 @@ import {
   MarkdownNode,
   findMatchingFile,
 } from '.';
+import { slash } from './utils';
 
 export type GatsbyPluginArgs = {
   node: MarkdownNode;
@@ -52,7 +53,7 @@ export const onCreateNode = (
 
       const file = findMatchingFile(value, files, options);
 
-      const newValue = path.relative(directory, file.absolutePath);
+      const newValue = slash(path.relative(directory, file.absolutePath));
 
       this.update(newValue);
     });
