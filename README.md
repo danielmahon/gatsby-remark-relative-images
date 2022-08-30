@@ -1,3 +1,7 @@
+# 🛠 Hello, I need a maintainer 👩‍💻 🧑‍💻 🛠 
+
+As you can probably see, I have not maintained, or used this package (or Gatsby for that matter) in a number of years. Frankly, I'm surprised this package still needs to exist. I have no plans to continue working on this so if you would like to take over this repo please let me know.
+
 # gatsby-remark-relative-images
 
 Convert image src(s) in markdown/html/frontmatter to be relative to their node's parent directory. This will help [gatsby-remark-images](https://github.com/gatsbyjs/gatsby/tree/master/packages/gatsby-remark-images) match images outside the node folder. This was built for use with NetlifyCMS and should be considered a temporary solution until relative paths are supported. If it works for other use cases then great!
