@@ -53,6 +53,7 @@ typings/
 
 # dotenv environment variable files
 .env*
+.vscode
 
 # gatsby files
 .cache/
@@ -60,13 +61,6 @@ public
 
 # Mac files
 .DS_Store
-
-# Yarn
-yarn-error.log
-.pnp/
-.pnp.js
-# Yarn Integrity file
-.yarn-integrity
 
 # Build directory
 dist/
