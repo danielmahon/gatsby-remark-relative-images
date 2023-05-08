@@ -24,7 +24,7 @@ export const onCreateNode = (
 ) => {
   const options = defaults(pluginOptions, defaultPluginOptions);
 
-  if (node.internal.type === `MarkdownRemark` || node.internal.type === `Mdx`) {
+  if (node.fileAbsolutePath && node.internal.type === `MarkdownRemark` || node.internal.type === `Mdx`) {
     const files = getNodesByType(`File`);
 
     const directory = path.dirname(node.fileAbsolutePath);
