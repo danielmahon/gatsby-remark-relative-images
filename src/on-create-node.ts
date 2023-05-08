@@ -1,3 +1,4 @@
+import { GatsbyNode } from 'gatsby';
 import path from 'path';
 import { defaults, isString } from 'lodash';
 import traverse from 'traverse';
@@ -13,13 +14,14 @@ import { slash } from './utils';
 export type GatsbyPluginArgs = {
   node: MarkdownNode;
   getNodesByType: (type: string) => GatsbyFile[];
+  getNode: (id: string) => GatsbyNode;
   reporter: {
     info: (msg: string, error?: Error) => void;
   };
 };
 
 export const onCreateNode = (
-  { node, getNodesByType }: GatsbyPluginArgs,
+  { node, getNodesByType, getNode }: GatsbyPluginArgs,
   pluginOptions: PluginOptions
 ) => {
   const options = defaults(pluginOptions, defaultPluginOptions);
@@ -27,7 +29,10 @@ export const onCreateNode = (
   if (node.fileAbsolutePath && node.internal.type === `MarkdownRemark` || node.internal.type === `Mdx`) {
     const files = getNodesByType(`File`);
 
-    const directory = path.dirname(node.fileAbsolutePath);
+    let fileAbsolutePath = node.fileAbsolutePath;
+    if (!fileAbsolutePath && pluginOptions.resolveNodePath) {
+    }
+    const directory = path.dirname(fileAbsolutePath);
 
     // Deeply iterate through frontmatter data for absolute paths
     traverse(node.frontmatter).forEach(function (value) {
