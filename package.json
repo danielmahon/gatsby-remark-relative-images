@@ -1,6 +1,6 @@
 {
   "name": "gatsby-remark-relative-images",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "Convert image src(s) in markdown to be relative to their node's parent directory. This will help gatsby-remark-images match images outside the node folder. For example, use with NetlifyCMS.",
   "main": "dist/index.js",
   "files": [
