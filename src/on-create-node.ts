@@ -16,13 +16,21 @@ export type GatsbyPluginArgs = {
   reporter: {
     info: (msg: string, error?: Error) => void;
   };
+  actions: {
+    createNodeField: (args: {
+      node: MarkdownNode;
+      name: string;
+      value: any;
+    }) => void;
+  };
 };
 
 export const onCreateNode = (
-  { node, getNodesByType }: GatsbyPluginArgs,
+  { node, getNodesByType, actions }: GatsbyPluginArgs,
   pluginOptions: PluginOptions
 ) => {
   const options = defaults(pluginOptions, defaultPluginOptions);
+  const { createNodeField } = actions;
 
   if (node.fileAbsolutePath && node.internal.type === `MarkdownRemark` || node.internal.type === `Mdx`) {
     const files = getNodesByType(`File`);
@@ -56,6 +64,12 @@ export const onCreateNode = (
       const newValue = slash(path.relative(directory, file.absolutePath));
 
       this.update(newValue);
+
+      createNodeField({
+        node,
+        name: `frontmatter`,
+        value: node.frontmatter,
+      });
     });
   }
 };
