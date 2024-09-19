@@ -57,7 +57,7 @@ export const defaultPluginOptions = {
 export const findMatchingFile = (
   src: string,
   files: GatsbyFile[],
-  options: PluginOptions
+  options: PluginOptions,
 ) => {
   const result = find(files, (file) => {
     const staticPath = slash(path.join(options.staticFolderName, src));
@@ -65,7 +65,7 @@ export const findMatchingFile = (
   });
   if (!result) {
     throw new Error(
-      `No matching file found for src "${src}" in static folder "${options.staticFolderName}". Please check static folder name and that file exists at "${options.staticFolderName}${src}". This error will probably cause a "GraphQLDocumentError" later in build. All converted field paths MUST resolve to a matching file in the "static" folder.`
+      `No matching file found for src "${src}" in static folder "${options.staticFolderName}". Please check static folder name and that file exists at "${options.staticFolderName}${src}". This error will probably cause a "GraphQLDocumentError" later in build. All converted field paths MUST resolve to a matching file in the "static" folder.`,
     );
   }
   return result;
@@ -73,7 +73,7 @@ export const findMatchingFile = (
 
 export default async (
   { files, markdownNode, markdownAST }: GatsbyNodePluginArgs,
-  pluginOptions: PluginOptions
+  pluginOptions: PluginOptions,
 ) => {
   // Default options
   const options = defaults(pluginOptions, defaultPluginOptions);

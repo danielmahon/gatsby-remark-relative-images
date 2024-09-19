@@ -16,16 +16,28 @@ export type GatsbyPluginArgs = {
   reporter: {
     info: (msg: string, error?: Error) => void;
   };
+  actions: {
+    createNodeField: (args: {
+      node: MarkdownNode;
+      name: string;
+      value: any;
+    }) => void;
+  };
 };
 
 export const onCreateNode = (
-  { node, getNodesByType }: GatsbyPluginArgs,
-  pluginOptions: PluginOptions
+  { node, getNodesByType, actions }: GatsbyPluginArgs,
+  pluginOptions: PluginOptions,
 ) => {
   const options = defaults(pluginOptions, defaultPluginOptions);
+  const { createNodeField } = actions;
 
-  if (node.fileAbsolutePath && node.internal.type === `MarkdownRemark` || node.internal.type === `Mdx`) {
-    const files = getNodesByType(`File`);
+  if (
+    (node.fileAbsolutePath && node.internal.type === `MarkdownRemark`) ||
+    node.internal.type === `Mdx`
+  ) {
+    // Filter out files that don't have an absolute path
+    const files = getNodesByType(`File`).filter((file) => file.absolutePath);
 
     const directory = path.dirname(node.fileAbsolutePath);
 
@@ -53,9 +65,22 @@ export const onCreateNode = (
 
       const file = findMatchingFile(value, files, options);
 
-      const newValue = slash(path.relative(directory, file.absolutePath));
+      if (!file || typeof file.absolutePath !== 'string') {
+        console.error(
+          'Invalid file or file.absolutePath is not a string',
+          file,
+        );
+        return; // Skip this iteration or handle this case as appropriate
+      }
 
-      this.update(newValue);
+      const newValue = slash(path.relative(directory, file.absolutePath));
+      if (newValue) this.update(newValue);
+
+      createNodeField({
+        node,
+        name: `frontmatter`,
+        value: node.frontmatter,
+      });
     });
   }
 };
